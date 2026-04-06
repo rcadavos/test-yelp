@@ -7,7 +7,10 @@
 export function buildProductionCsp(nonce: string): string {
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    // No 'strict-dynamic': it disables host allowlisting and breaks Next.js chunk / bootstrap
+    // scripts that are not always attributed with the nonce in the trust chain.
+    // 'self' + per-request nonce still allows same-origin scripts and tagged inline scripts.
+    `script-src 'self' 'nonce-${nonce}'`,
     `style-src 'self' 'nonce-${nonce}'`,
     "img-src 'self' data: blob:",
     "font-src 'self'",
