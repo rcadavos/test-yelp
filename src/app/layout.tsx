@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { QueryProvider } from "@/providers/query-provider";
 import { SiteShell } from "@/components/site-shell";
 import "./globals.css";
 
@@ -19,8 +20,8 @@ const appUrl =
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: "Restaurant search",
-    template: "%s · Restaurant search",
+    default: "Restaurant Finder",
+    template: "%s · Restaurant Finder",
   },
   description:
     "Explore restaurants by city with ratings, addresses, and map-ready coordinates—built for quick, confident dining decisions.",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "Restaurant search",
+    siteName: "Restaurant Finder",
   },
 };
 
@@ -39,8 +40,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="relative min-h-full flex flex-col font-sans">
-        <SiteShell>{children}</SiteShell>
+      <body className="relative flex min-h-dvh flex-col font-sans max-md:h-dvh max-md:max-h-dvh max-md:overflow-hidden">
+        <QueryProvider>
+          <SiteShell>{children}</SiteShell>
+        </QueryProvider>
       </body>
     </html>
   );
