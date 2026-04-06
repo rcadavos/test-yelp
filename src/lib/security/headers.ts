@@ -5,7 +5,7 @@ const PERMISSIONS_POLICY =
 
 /**
  * Applies defense-in-depth headers suitable for production scans (e.g. securityheaders.com).
- * CSP is set separately because it includes a per-request nonce.
+ * CSP is not applied here (see `middleware.ts`).
  */
 export function applyStaticSecurityHeaders(
   response: NextResponse,

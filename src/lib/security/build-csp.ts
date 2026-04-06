@@ -1,6 +1,6 @@
 /**
- * CSP strings for middleware (Edge-safe). Next.js reads the nonce from the
- * Content-Security-Policy *request* header to attribute script tags.
+ * CSP helpers (currently unused — middleware does not send CSP; see `middleware.ts`).
+ * Next.js reads the nonce from the Content-Security-Policy *request* header when applied.
  * @see https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  */
 

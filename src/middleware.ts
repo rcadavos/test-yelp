@@ -1,37 +1,15 @@
-import { NextResponse, type NextRequest } from "next/server";
-import {
-  buildDevelopmentCsp,
-  buildProductionCsp,
-} from "@/lib/security/build-csp";
+import { NextResponse } from "next/server";
 import { applyStaticSecurityHeaders } from "@/lib/security/headers";
 
-function createNonce(): string {
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  let binary = "";
-  for (const b of bytes) {
-    binary += String.fromCharCode(b);
-  }
-  return btoa(binary);
-}
-
-export function middleware(request: NextRequest) {
+/**
+ * CSP is intentionally not set: nonce-based policies conflict with Next.js inline /
+ * chunk scripts in production. Re-enable via `build-csp.ts` only after aligning with
+ * Next.js CSP docs and testing all routes.
+ */
+export function middleware() {
   const isProduction = process.env.NODE_ENV === "production";
-  const nonce = isProduction ? createNonce() : "";
-  const csp = isProduction
-    ? buildProductionCsp(nonce)
-    : buildDevelopmentCsp();
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("Content-Security-Policy", csp);
-
-  const response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
-
-  response.headers.set("Content-Security-Policy", csp);
+  const response = NextResponse.next();
   applyStaticSecurityHeaders(response, { isProduction });
-
   return response;
 }
 
