@@ -44,19 +44,24 @@ export function RestaurantSearchPanel() {
       className="flex min-h-0 flex-1 flex-col"
     >
       <Card
-        padding="md"
+        padding="none"
         className={cn(
-          "flex flex-col",
+          "flex flex-col p-3 sm:p-5",
           showResults &&
             "min-h-0 max-md:flex-1 max-md:overflow-hidden max-md:min-h-0 sm:overflow-visible",
         )}
       >
         <CardHeader>
-          <CardTitle id={`${formId}-heading`}>Search by city</CardTitle>
+          <CardTitle
+            id={`${formId}-heading`}
+            className="text-base sm:text-xl"
+          >
+            Search by city
+          </CardTitle>
         </CardHeader>
 
         <form
-          className="mt-4 flex flex-row items-stretch gap-2 sm:gap-3"
+          className="mt-3 flex flex-row items-stretch gap-1.5 sm:mt-4 sm:gap-3"
           onSubmit={onSubmit}
           role="search"
           aria-label="Restaurant Finder — search by city"
@@ -73,16 +78,20 @@ export function RestaurantSearchPanel() {
               placeholder="e.g. Miami, FL or Austin"
               value={draft}
               onChange={onDraftChange}
+              className="h-10 rounded-lg px-3 text-sm sm:h-12 sm:rounded-xl sm:px-4 sm:text-base"
             />
           </div>
-          <Button type="submit" className="shrink-0 px-4 sm:min-w-[8.5rem] sm:px-6">
+          <Button
+            type="submit"
+            className="h-10 shrink-0 rounded-lg px-3 text-sm sm:h-12 sm:min-w-[8.5rem] sm:rounded-xl sm:px-6 sm:text-base"
+          >
             Search
           </Button>
         </form>
 
         <div
           className={cn(
-            "mt-4",
+            "mt-3 sm:mt-4",
             showResults &&
               "max-md:flex max-md:min-h-0 max-md:flex-1 max-md:flex-col max-md:overflow-hidden",
           )}
