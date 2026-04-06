@@ -57,14 +57,14 @@ function ChevronRightIcon({ className }: { className?: string }) {
 
 function RestaurantMobileCardSkeleton() {
   return (
-    <Card variant="subtle" padding="sm" className="shadow-sm">
-      <Skeleton className="h-5 w-3/4 max-w-[14rem]" />
-      <div className="mt-3 space-y-3">
+    <Card variant="subtle" padding="none" className="rounded-lg px-3 py-2 shadow-sm">
+      <Skeleton className="h-4 w-3/4 max-w-[13rem]" />
+      <div className="mt-2 space-y-2">
         {[0, 1, 2].map((i) => (
           <div key={i}>
-            <Skeleton className="h-3 w-14" />
-            <Skeleton className="mt-1.5 h-4 w-full max-w-[17rem]" />
-            {i === 2 ? <Skeleton className="mt-1 h-3 w-4/5 max-w-[14rem]" /> : null}
+            <Skeleton className="h-2.5 w-10" />
+            <Skeleton className="mt-1 h-3.5 w-full max-w-[16rem]" />
+            {i === 2 ? <Skeleton className="mt-0.5 h-2.5 w-4/5 max-w-[13rem]" /> : null}
           </div>
         ))}
       </div>
@@ -75,36 +75,52 @@ function RestaurantMobileCardSkeleton() {
 function RestaurantMobileCard({ row }: { row: RestaurantRow }) {
   const { latitude: lat, longitude: lng } = row;
   return (
-    <Card variant="subtle" padding="sm" className="shadow-sm">
-      <h3 className="text-base font-semibold leading-snug text-sf-ink">{row.name}</h3>
-      <dl className="mt-3 space-y-3 text-sm">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-sf-muted">
-            Rating
+    <Card variant="subtle" padding="none" className="rounded-lg px-3 py-2 shadow-sm">
+      <h3 className="text-sm font-semibold leading-snug text-sf-ink">{row.name}</h3>
+      <dl className="mt-2 space-y-2 text-xs">
+        <div className="flex min-w-0 items-start gap-2">
+          <dt className="flex w-7 shrink-0 justify-center text-center text-sm leading-none">
+            <span className="text-amber-500" aria-hidden>
+              ★
+            </span>
+            <span className="sr-only">Rating</span>
           </dt>
-          <dd className="mt-0.5 text-sf-primary">
-            {row.rating > 0 ? `${row.rating.toFixed(1)} ★` : "—"}
-            {row.reviewCount > 0 ? (
-              <span className="font-normal text-sf-muted"> ({row.reviewCount} reviews)</span>
-            ) : null}
+          <dd className="m-0 min-w-0 flex-1 text-sf-primary">
+            {row.rating > 0 ? (
+              <>
+                <span className="tabular-nums">{row.rating.toFixed(1)}</span>{" "}
+                <span className="text-sf-primary" aria-hidden>
+                  ★
+                </span>
+                {row.reviewCount > 0 ? (
+                  <span className="font-normal text-sf-muted">
+                    {" "}
+                    ({row.reviewCount} reviews)
+                  </span>
+                ) : null}
+              </>
+            ) : (
+              "—"
+            )}
           </dd>
         </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-sf-muted">
-            Address
+        <div className="flex min-w-0 items-start gap-2">
+          <dt className="flex w-7 shrink-0 justify-center text-center text-sm leading-none text-sf-muted">
+            <span aria-hidden>📍</span>
+            <span className="sr-only">Address</span>
           </dt>
-          <dd className="mt-0.5 leading-snug text-sf-muted">{row.address}</dd>
+          <dd className="m-0 min-w-0 flex-1 leading-snug text-sf-muted">{row.address}</dd>
         </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-sf-muted">
-            Coordinates
+        <div className="flex min-w-0 items-start gap-2">
+          <dt className="flex w-7 shrink-0 justify-center text-center text-sm leading-none text-sf-muted">
+            <span aria-hidden>⌖</span>
+            <span className="sr-only">Coordinates</span>
           </dt>
-          <dd className="mt-0.5 font-mono text-xs leading-relaxed text-sf-muted">
+          <dd className="m-0 min-w-0 flex-1 font-mono text-[0.6875rem] leading-snug text-sf-muted">
             {lat != null && lng != null ? (
-              <>
-                <span className="block break-all">Lat {lat.toFixed(5)}</span>
-                <span className="block break-all">Lng {lng.toFixed(5)}</span>
-              </>
+              <span className="break-all">
+                Lat {lat.toFixed(5)} · Lng {lng.toFixed(5)}
+              </span>
             ) : (
               "—"
             )}
@@ -161,17 +177,17 @@ function TableSkeletonBody({ rowCount }: { rowCount: number }) {
 
 function PaginationSkeleton() {
   return (
-    <div className="mt-4 flex min-h-[2.75rem] flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <Skeleton className="h-5 w-44 shrink-0 md:w-52" />
-      <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2 md:flex-none">
+    <div className="mt-3 flex min-h-[2.25rem] flex-col gap-2 md:mt-4 md:min-h-[2.75rem] md:gap-3 md:flex-row md:items-center md:justify-between">
+      <Skeleton className="h-4 w-36 shrink-0 md:h-5 md:w-52" />
+      <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-1.5 md:w-auto md:justify-end md:gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-1.5 md:gap-2 md:flex-none">
           <Skeleton className="hidden h-4 w-24 md:block" />
-          <Skeleton className="h-10 w-[4.5rem] shrink-0 rounded-lg md:w-28" />
+          <Skeleton className="h-8 w-[4rem] shrink-0 rounded-lg md:h-10 md:w-28" />
         </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Skeleton className="h-10 w-10 shrink-0 rounded-lg md:w-[5.5rem]" />
+        <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
+          <Skeleton className="h-8 w-8 shrink-0 rounded-lg md:h-10 md:w-[5.5rem]" />
           <Skeleton className="hidden h-4 w-[7rem] md:block" />
-          <Skeleton className="h-10 w-10 shrink-0 rounded-lg md:w-[4.5rem]" />
+          <Skeleton className="h-8 w-8 shrink-0 rounded-lg md:h-10 md:w-[4.5rem]" />
         </div>
       </div>
     </div>
@@ -202,7 +218,7 @@ export function RestaurantResultsTable({
           const r = row.original.rating;
           const c = row.original.reviewCount;
           return (
-            <span className="text-sf-primary">
+            <span className="whitespace-nowrap text-sf-primary">
               {r > 0 ? `${r.toFixed(1)} ★` : "—"}
               {c > 0 ? (
                 <span className="font-normal text-sf-muted"> ({c} reviews)</span>
@@ -273,7 +289,7 @@ export function RestaurantResultsTable({
       >
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="min-h-0 flex-1 overflow-y-scroll overflow-x-hidden [scrollbar-gutter:stable] md:hidden">
-            <ul className="list-none space-y-3 p-3" role="list">
+            <ul className="list-none space-y-2 p-2" role="list">
               {loading ? (
                 Array.from({ length: skeletonRowCount }, (_, i) => (
                   <li key={i}>
@@ -333,8 +349,8 @@ export function RestaurantResultsTable({
       {loading ? (
         <PaginationSkeleton />
       ) : (
-        <div className="mt-4 flex min-h-[2.75rem] flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm leading-5 text-sf-muted">
+        <div className="mt-3 flex min-h-[2.25rem] flex-col gap-2 md:mt-4 md:min-h-[2.75rem] md:gap-3 md:flex-row md:items-center md:justify-between">
+          <p className="text-xs leading-4 text-sf-muted md:text-sm md:leading-5">
             {total === 0 ? (
               "No places match."
             ) : (
@@ -347,7 +363,7 @@ export function RestaurantResultsTable({
             )}
           </p>
 
-          <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
+          <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-1.5 md:w-auto md:justify-end md:gap-3">
             <NativeSelect
               label={
                 <>
@@ -356,7 +372,8 @@ export function RestaurantResultsTable({
                 </>
               }
               aria-label="Rows per page"
-              rootClassName="min-w-0 flex-1 md:flex-none"
+              rootClassName="min-w-0 flex-1 text-xs md:flex-none md:text-sm"
+              selectClassName="h-8 pl-2 pr-6 text-xs md:h-10 md:pl-3 md:pr-7 md:text-sm"
               value={pagination.pageSize}
               onChange={(e) => {
                 const pageSize = Number(e.target.value);
@@ -370,30 +387,30 @@ export function RestaurantResultsTable({
               ))}
             </NativeSelect>
 
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
               <Button
                 variant="outline"
                 type="button"
-                className="px-2.5 md:px-3"
+                className="h-8 min-w-8 px-2 text-xs md:h-10 md:min-w-0 md:px-3 md:text-sm"
                 aria-label="Previous page"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage() || isFetching}
               >
-                <ChevronLeftIcon className="size-4 md:hidden" />
+                <ChevronLeftIcon className="size-3.5 md:hidden" />
                 <span className="hidden md:inline">Previous</span>
               </Button>
-              <span className="min-w-0 shrink px-1 text-center text-xs tabular-nums text-sf-muted md:min-w-[7rem] md:px-0 md:text-sm">
+              <span className="min-w-0 max-w-[5.5rem] shrink px-0.5 text-center text-[0.6875rem] tabular-nums leading-tight text-sf-muted md:max-w-none md:min-w-[7rem] md:px-0 md:text-sm">
                 Page {pagination.pageIndex + 1} of {pageCount}
               </span>
               <Button
                 variant="outline"
                 type="button"
-                className="px-2.5 md:px-3"
+                className="h-8 min-w-8 px-2 text-xs md:h-10 md:min-w-0 md:px-3 md:text-sm"
                 aria-label="Next page"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage() || isFetching}
               >
-                <ChevronRightIcon className="size-4 md:hidden" />
+                <ChevronRightIcon className="size-3.5 md:hidden" />
                 <span className="hidden md:inline">Next</span>
               </Button>
             </div>

@@ -15,7 +15,9 @@ export function LandingWithSearch() {
             <span className="text-sf-primary"> showing up for</span>
           </>
         }
-        description="Enter a city to see restaurants, it&apos;s ratings, addresses and coordinates."
+        headingClassName="max-sm:text-nowrap max-sm:text-[min(3.4vw,0.8125rem)] max-sm:leading-tight"
+        descriptionClassName="max-md:hidden"
+        description="Enter a city to see restaurants, their ratings, addresses, and coordinates."
       />
 
       <div className="flex min-h-0 flex-1 flex-col">
