@@ -18,7 +18,7 @@ export function LandingWithSearch() {
         description="Enter a city to see ratings, addresses, and map-ready coordinates in one scannable list."
       />
 
-      <div className="flex min-h-0 flex-1 flex-col sm:min-h-0 sm:flex-none">
+      <div className="flex min-h-0 flex-1 flex-col">
         <RestaurantSearchPanel />
       </div>
 

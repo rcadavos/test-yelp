@@ -58,14 +58,24 @@ export function RestaurantSearchResults({ searchCity }: Props) {
   const errorMessage =
     data && data.ok === false ? data.error : query.isError ? "Could not load results." : null;
 
+  const isInitialLoading = query.isFetching && query.data === undefined;
+  const hasResultRows = data?.ok === true && total > 0;
+
   return (
     <div
       aria-live="polite"
       aria-busy={query.isFetching}
       className="max-md:flex max-md:min-h-0 max-md:flex-1 max-md:flex-col"
     >
-      {query.isFetching && !query.data && (
-        <Callout variant="info">Loading restaurants…</Callout>
+      {(isInitialLoading || hasResultRows) && (
+        <RestaurantResultsTable
+          loading={isInitialLoading}
+          rows={list}
+          total={total}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          isFetching={query.isFetching}
+        />
       )}
 
       {errorMessage && (
@@ -80,15 +90,6 @@ export function RestaurantSearchResults({ searchCity }: Props) {
         </Callout>
       )}
 
-      {data?.ok === true && total > 0 && (
-        <RestaurantResultsTable
-          rows={list}
-          total={total}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-          isFetching={query.isFetching}
-        />
-      )}
     </div>
   );
 }

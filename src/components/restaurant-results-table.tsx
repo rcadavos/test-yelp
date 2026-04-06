@@ -12,6 +12,12 @@ import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { NativeSelect } from "@/components/ui/native-select";
+import {
+  RestaurantResultsTableColgroup,
+  RestaurantResultsTableThead,
+} from "@/components/restaurant-results-table-thead";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils/cn";
 import type { RestaurantRow } from "@/types/restaurant";
 
@@ -46,6 +52,23 @@ function ChevronRightIcon({ className }: { className?: string }) {
     >
       <path d="m9 18 6-6-6-6" />
     </svg>
+  );
+}
+
+function RestaurantMobileCardSkeleton() {
+  return (
+    <Card variant="subtle" padding="sm" className="shadow-sm">
+      <Skeleton className="h-5 w-3/4 max-w-[14rem]" />
+      <div className="mt-3 space-y-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <Skeleton className="h-3 w-14" />
+            <Skeleton className="mt-1.5 h-4 w-full max-w-[17rem]" />
+            {i === 2 ? <Skeleton className="mt-1 h-3 w-4/5 max-w-[14rem]" /> : null}
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 
@@ -98,9 +121,62 @@ export type RestaurantResultsTableProps = {
   pagination: PaginationState;
   onPaginationChange: OnChangeFn<PaginationState>;
   isFetching: boolean;
+  /**
+   * First fetch with no cached response — renders skeleton inside this table shell so
+   * layout does not swap with a separate component (avoids CLS).
+   */
+  loading?: boolean;
 };
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
+
+const desktopTableClass = "min-w-[640px] table-fixed";
+
+function TableSkeletonBody({ rowCount }: { rowCount: number }) {
+  const n = Math.min(Math.max(rowCount, 1), 50);
+  return (
+    <>
+      {Array.from({ length: n }, (_, i) => (
+        <TableRow
+          key={i}
+          className="border-b border-sf-border/70 last:border-b-0 odd:bg-white even:bg-sf-mint-soft/20"
+        >
+          <TableCell>
+            <Skeleton className="h-4 w-[min(100%,12rem)] max-w-[14rem]" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-24" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-[min(100%,18rem)] max-w-[20rem]" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="h-4 w-36" />
+          </TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
+}
+
+function PaginationSkeleton() {
+  return (
+    <div className="mt-4 flex min-h-[2.75rem] flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <Skeleton className="h-5 w-44 shrink-0 md:w-52" />
+      <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2 md:flex-none">
+          <Skeleton className="hidden h-4 w-24 md:block" />
+          <Skeleton className="h-10 w-[4.5rem] shrink-0 rounded-lg md:w-28" />
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <Skeleton className="h-10 w-10 shrink-0 rounded-lg md:w-[5.5rem]" />
+          <Skeleton className="hidden h-4 w-[7rem] md:block" />
+          <Skeleton className="h-10 w-10 shrink-0 rounded-lg md:w-[4.5rem]" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function RestaurantResultsTable({
   rows,
@@ -108,6 +184,7 @@ export function RestaurantResultsTable({
   pagination,
   onPaginationChange,
   isFetching,
+  loading = false,
 }: RestaurantResultsTableProps) {
   const columns = useMemo<ColumnDef<RestaurantRow>[]>(
     () => [
@@ -164,160 +241,165 @@ export function RestaurantResultsTable({
 
   /* eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table instance is intentionally non-memoizable */
   const table = useReactTable({
-    data: rows,
+    data: loading ? [] : rows,
     columns,
     state: { pagination },
     onPaginationChange,
     manualPagination: true,
-    rowCount: total,
-    pageCount,
+    rowCount: loading ? 0 : total,
+    pageCount: loading ? 1 : pageCount,
     getCoreRowModel: getCoreRowModel(),
   });
 
   const from = total === 0 ? 0 : pagination.pageIndex * pagination.pageSize + 1;
   const to = Math.min((pagination.pageIndex + 1) * pagination.pageSize, total);
 
+  const skeletonRowCount = pagination.pageSize;
+
   return (
     <div className="relative flex max-md:min-h-0 max-md:flex-1 max-md:flex-col flex-col gap-0">
+      {loading ? <span className="sr-only">Loading restaurant results…</span> : null}
+
       <div
         className={cn(
           "flex min-h-0 flex-col overflow-hidden rounded-xl border border-sf-border/90 bg-sf-card",
           "max-md:min-h-0 max-md:flex-1 max-md:max-h-none",
           "md:max-h-[min(52vh,520px)]",
-          isFetching && "opacity-60",
+          isFetching && !loading && "opacity-60",
         )}
         role="region"
         aria-label="Restaurant results"
         aria-busy={isFetching}
       >
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable]">
-          <ul className="list-none space-y-3 p-3 md:hidden" role="list">
-            {rows.length === 0 ? (
-              <li className="py-8 text-center text-sm text-sf-muted">No rows on this page.</li>
-            ) : (
-              rows.map((r) => (
-                <li key={r.id}>
-                  <RestaurantMobileCard row={r} />
-                </li>
-              ))
-            )}
-          </ul>
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 overflow-y-scroll overflow-x-hidden [scrollbar-gutter:stable] md:hidden">
+            <ul className="list-none space-y-3 p-3" role="list">
+              {loading ? (
+                Array.from({ length: skeletonRowCount }, (_, i) => (
+                  <li key={i}>
+                    <RestaurantMobileCardSkeleton />
+                  </li>
+                ))
+              ) : rows.length === 0 ? (
+                <li className="py-8 text-center text-sm text-sf-muted">No rows on this page.</li>
+              ) : (
+                rows.map((r) => (
+                  <li key={r.id}>
+                    <RestaurantMobileCard row={r} />
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
 
-          <div className="hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id} className="border-b border-sf-border bg-sf-mint-soft/50">
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        scope="col"
-                        className="px-3 py-3 font-semibold text-sf-ink sm:px-4"
+          <div className="hidden min-h-0 flex-1 flex-col md:flex">
+            <div className="min-h-0 flex-1 overflow-x-auto overflow-y-scroll [scrollbar-gutter:stable]">
+              <Table className={desktopTableClass}>
+                <RestaurantResultsTableColgroup />
+                <RestaurantResultsTableThead />
+                <TableBody>
+                  {loading ? (
+                    <TableSkeletonBody rowCount={skeletonRowCount} />
+                  ) : table.getRowModel().rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={columns.length}
+                        className="px-4 py-8 text-center text-sf-muted"
                       >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, header.getContext())}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={columns.length}
-                      className="px-4 py-8 text-center text-sf-muted"
-                    >
-                      No rows on this page.
-                    </td>
-                  </tr>
-                ) : (
-                  table.getRowModel().rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className="border-b border-sf-border/70 last:border-b-0 odd:bg-white even:bg-sf-mint-soft/20"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-3 py-3 align-top sm:px-4">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                        No rows on this page.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        className="border-b border-sf-border/70 last:border-b-0 odd:bg-white even:bg-sf-mint-soft/20"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <p className="text-sm text-sf-muted">
-          {total === 0 ? (
-            "No places match."
-          ) : (
-            <>
-              <span className="hidden md:inline">
-                Showing {from}–{to} of {total}
-              </span>
-              <span className="md:hidden">Showing {from}–{to} of {total}</span>
-            </>
-          )}
-        </p>
-
-        <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
-          <NativeSelect
-            label={
+      {loading ? (
+        <PaginationSkeleton />
+      ) : (
+        <div className="mt-4 flex min-h-[2.75rem] flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p className="text-sm leading-5 text-sf-muted">
+            {total === 0 ? (
+              "No places match."
+            ) : (
               <>
-                <span className="md:hidden">Rows</span>
-                <span className="hidden md:inline">Rows per page</span>
+                <span className="hidden md:inline">
+                  Showing {from}–{to} of {total}
+                </span>
+                <span className="md:hidden">Showing {from}–{to} of {total}</span>
               </>
-            }
-            aria-label="Rows per page"
-            rootClassName="min-w-0 flex-1 md:flex-none"
-            value={pagination.pageSize}
-            onChange={(e) => {
-              const pageSize = Number(e.target.value);
-              onPaginationChange({ pageIndex: 0, pageSize });
-            }}
-          >
-            {PAGE_SIZE_OPTIONS.map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </NativeSelect>
+            )}
+          </p>
 
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              variant="outline"
-              type="button"
-              className="px-2.5 md:px-3"
-              aria-label="Previous page"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage() || isFetching}
+          <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-2 md:w-auto md:justify-end md:gap-3">
+            <NativeSelect
+              label={
+                <>
+                  <span className="md:hidden">Rows</span>
+                  <span className="hidden md:inline">Rows per page</span>
+                </>
+              }
+              aria-label="Rows per page"
+              rootClassName="min-w-0 flex-1 md:flex-none"
+              value={pagination.pageSize}
+              onChange={(e) => {
+                const pageSize = Number(e.target.value);
+                onPaginationChange({ pageIndex: 0, pageSize });
+              }}
             >
-              <ChevronLeftIcon className="size-4 md:hidden" />
-              <span className="hidden md:inline">Previous</span>
-            </Button>
-            <span className="min-w-0 shrink px-1 text-center text-xs tabular-nums text-sf-muted md:min-w-[7rem] md:px-0 md:text-sm">
-              Page {pagination.pageIndex + 1} of {pageCount}
-            </span>
-            <Button
-              variant="outline"
-              type="button"
-              className="px-2.5 md:px-3"
-              aria-label="Next page"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage() || isFetching}
-            >
-              <ChevronRightIcon className="size-4 md:hidden" />
-              <span className="hidden md:inline">Next</span>
-            </Button>
+              {PAGE_SIZE_OPTIONS.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </NativeSelect>
+
+            <div className="flex shrink-0 items-center gap-2">
+              <Button
+                variant="outline"
+                type="button"
+                className="px-2.5 md:px-3"
+                aria-label="Previous page"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage() || isFetching}
+              >
+                <ChevronLeftIcon className="size-4 md:hidden" />
+                <span className="hidden md:inline">Previous</span>
+              </Button>
+              <span className="min-w-0 shrink px-1 text-center text-xs tabular-nums text-sf-muted md:min-w-[7rem] md:px-0 md:text-sm">
+                Page {pagination.pageIndex + 1} of {pageCount}
+              </span>
+              <Button
+                variant="outline"
+                type="button"
+                className="px-2.5 md:px-3"
+                aria-label="Next page"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage() || isFetching}
+              >
+                <ChevronRightIcon className="size-4 md:hidden" />
+                <span className="hidden md:inline">Next</span>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -41,11 +41,7 @@ export function RestaurantSearchPanel() {
   return (
     <section
       aria-labelledby={`${formId}-heading`}
-      className={cn(
-        "flex flex-col",
-        "max-md:min-h-0 max-md:flex-1",
-        "sm:flex-none",
-      )}
+      className="flex min-h-0 flex-1 flex-col"
     >
       <Card
         padding="md"
@@ -73,6 +69,7 @@ export function RestaurantSearchPanel() {
               id={inputId}
               name="location"
               autoComplete="address-level2"
+              autoFocus
               placeholder="e.g. Miami, FL or Austin"
               value={draft}
               onChange={onDraftChange}
