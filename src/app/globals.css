@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+/* Emerald / mint palette: primary greens, soft mint backgrounds, warm cream accents. */
+
+:root {
+  --background: var(--sf-mint-soft);
+  --foreground: var(--sf-ink);
+  --sf-primary: #00674d;
+  --sf-primary-dark: #005541;
+  --sf-secondary: #007d5e;
+  --sf-accent: #00a87e;
+  --sf-mint: #e6f5ec;
+  --sf-mint-soft: #f0faf5;
+  --sf-cream: #f0ede6;
+  --sf-ink: #1c1917;
+  --sf-muted: #57534e;
+  --sf-border: #c0e6d2;
+  --sf-card: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-sf-primary: var(--sf-primary);
+  --color-sf-primary-dark: var(--sf-primary-dark);
+  --color-sf-secondary: var(--sf-secondary);
+  --color-sf-accent: var(--sf-accent);
+  --color-sf-mint: var(--sf-mint);
+  --color-sf-mint-soft: var(--sf-mint-soft);
+  --color-sf-cream: var(--sf-cream);
+  --color-sf-ink: var(--sf-ink);
+  --color-sf-muted: var(--sf-muted);
+  --color-sf-border: var(--sf-border);
+  --color-sf-card: var(--sf-card);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--sf-mint-soft);
+  background-image: radial-gradient(
+    ellipse 120% 80% at 50% -20%,
+    var(--sf-mint) 0%,
+    transparent 55%
+  );
+  color: var(--sf-ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
