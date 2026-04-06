@@ -78,7 +78,7 @@ export function RestaurantSearchPanel() {
               placeholder="e.g. Miami, FL or Austin"
               value={draft}
               onChange={onDraftChange}
-              className="h-10 rounded-lg px-3 text-sm sm:h-12 sm:rounded-xl sm:px-4 sm:text-base"
+              className="h-10 rounded-lg px-3 text-base sm:h-12 sm:rounded-xl sm:px-4"
             />
           </div>
           <Button
