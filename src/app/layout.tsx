@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import { QueryProvider } from "@/providers/query-provider";
 import { SiteShell } from "@/components/site-shell";
@@ -44,6 +45,7 @@ export default function RootLayout({
         <QueryProvider>
           <SiteShell>{children}</SiteShell>
         </QueryProvider>
+        <Analytics />
       </body>
     </html>
   );
