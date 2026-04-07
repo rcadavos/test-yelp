@@ -182,7 +182,7 @@ function PaginationSkeleton() {
       <div className="flex w-full min-w-0 flex-nowrap items-center justify-between gap-1.5 md:w-auto md:justify-end md:gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-1.5 md:gap-2 md:flex-none">
           <Skeleton className="hidden h-4 w-24 md:block" />
-          <Skeleton className="h-9 w-[4rem] shrink-0 rounded-lg md:h-10 md:w-28" />
+          <Skeleton className="h-8 w-[4rem] shrink-0 rounded-lg md:h-10 md:w-28" />
         </div>
         <div className="flex shrink-0 items-center gap-1.5 md:gap-2">
           <Skeleton className="h-8 w-8 shrink-0 rounded-lg md:h-10 md:w-[5.5rem]" />
@@ -372,8 +372,8 @@ export function RestaurantResultsTable({
                 </>
               }
               aria-label="Rows per page"
-              rootClassName="min-w-0 flex-1 text-base md:flex-none md:text-sm"
-              selectClassName="h-9 pl-2 pr-6 text-base md:h-10 md:pl-3 md:pr-7 md:text-sm"
+              rootClassName="min-w-0 flex-1 text-xs md:flex-none md:text-sm"
+              selectClassName="h-8 pl-2 pr-6 text-xs md:h-10 md:pl-3 md:pr-7 md:text-sm"
               value={pagination.pageSize}
               onChange={(e) => {
                 const pageSize = Number(e.target.value);
